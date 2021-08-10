@@ -2,9 +2,10 @@
 
 -export([reverse/1]).
 
-reverse(Chars) when length(Chars) =< 1 ->
-	Chars;
-reverse(Chars) when length(Chars) > 1 ->
-	[First|Rest] = Chars,
+reverse([]) ->
+	[];
+reverse([First]) ->
+	[First];
+reverse([First|Rest]) ->
 	reverse(Rest) ++ [First].
 	

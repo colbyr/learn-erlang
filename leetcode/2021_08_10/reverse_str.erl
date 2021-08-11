@@ -2,11 +2,11 @@
 -export([reverse/1]).
 
 reverse([]) ->
-	[];
+  [];
 
 reverse([First]) ->
-	[First];
+  [First];
 
 reverse([First|Rest]) ->
-	reverse(Rest) ++ [First].
+  reverse(Rest) ++ [First].
 

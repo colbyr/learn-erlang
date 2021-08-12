@@ -33,6 +33,7 @@ Output: "abcabccdcdcdef"
 
 Example 4:
 
+
 ```
 Input: s = "abc3[cd]xyz"
 Output: "abccdcdcdxyz"

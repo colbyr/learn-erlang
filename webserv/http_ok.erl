@@ -17,6 +17,10 @@ handle_call(_E, _From, State) ->
 handle_cast(accept, {ListenSocket, WorkerId}) ->
   {ok, AcceptSocket} = gen_tcp:accept(ListenSocket),
   io:format("Worker ~p: Connected~n", [WorkerId]),
+  % Once this worker has accepts a request,
+  % start up another worker to take its place.
+  % Without this call, we would eventually exhaust out worker pool
+  % and no more requests would be served.
   serv_supervisor:start_socket(),
   inet:setopts(AcceptSocket, [{active, once}]),
   {noreply, {AcceptSocket, WorkerId}}.

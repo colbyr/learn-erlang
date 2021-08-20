@@ -27,10 +27,12 @@ handle_cast(accept, {ListenSocket, WorkerId}) ->
 
 handle_info({tcp, _Socket, Req}, {AcceptSocket, WorkerId}) ->
   io:format(Req),
-  ok = gen_tcp:send(
-    AcceptSocket,
-    ["HTTP/1.1 200 OK\nContent-Type: text/plain; charset=utf-8\n\nIt me, Erlang worker ", io_lib:format("~p", [WorkerId]) , "."]
-  ),
+  Response = "HTTP/1.1 200 OK
+Content-Type: text/plain; charset=utf-8
+
+It me, Erlang. Everything is ok.
+",
+  ok = gen_tcp:send(AcceptSocket, Response),
   io:format("Worker ~p: Sent OK~n", [WorkerId]),
   ok = gen_tcp:close(AcceptSocket),
   io:format("Worker ~p: Closed~n", [WorkerId]),

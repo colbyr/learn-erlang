@@ -4,18 +4,24 @@
   decode_by_schema/2
 ]).
 
+-define(SEPARATOR, <<16#FF, 16#00>>).
+
 decode(Binary) ->
-  case decode(Binary, #{}) of
+  BinaryEntries = binary:split(Binary, ?SEPARATOR),
+  [decode_entry(Entry) || Entry <- BinaryEntries].
+
+decode_entry(Binary) ->
+  case decode_entry(Binary, #{}) of
     #{ invalid := Invalid } -> erlang:error(badarg, Invalid);
     Result -> Result
   end.
 
-decode(<<>>, Acc) ->
+decode_entry(<<>>, Acc) ->
   Acc;
-decode(<<Type:8, Size:8, Value:(Size)/binary, NextBinary/binary>>, Acc) ->
+decode_entry(<<Type:8, Size:8, Value:(Size)/binary, NextBinary/binary>>, Acc) ->
   NextAcc = maps:put(Type, Value, Acc),
-  decode(NextBinary, NextAcc);
-decode(Binary, Acc) ->
+  decode_entry(NextBinary, NextAcc);
+decode_entry(Binary, Acc) ->
   maps:put(invalid, Binary, Acc).
 
 % #{ 16#01 => {name, value_converter} }
@@ -38,8 +44,11 @@ get_value_by_schema(Key, Value, Schema) ->
     undefined -> Value
   end.
 
+
 decode_by_schema(Schema, Binary) ->
-  RawData = decode(Binary),
+  [decode_entry_by_schema(Schema, Entry) || Entry <- decode(Binary)].
+
+decode_entry_by_schema(Schema, RawData) ->
   SchemafiedList = [{
     get_key_by_schema(K, Schema),
     get_value_by_schema(K, V, Schema)

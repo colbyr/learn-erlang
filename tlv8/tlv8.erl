@@ -4,10 +4,10 @@
   decode_by_schema/2
 ]).
 
--define(SEPARATOR, <<16#FF, 16#00>>).
+-define(LIST_SEPARATOR, <<16#FF, 16#00>>).
 
 decode(Binary) ->
-  BinaryEntries = binary:split(Binary, ?SEPARATOR),
+  BinaryEntries = binary:split(Binary, ?LIST_SEPARATOR),
   [decode_entry(Entry) || Entry <- BinaryEntries].
 
 decode_entry(Binary) ->
